@@ -5,8 +5,6 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
-DUROMETER_DB = "sqlite:////data/Durometer.db"
-
 # Підтримка foreign keys для SQLite
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -14,38 +12,62 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
+# ================================================================
+DURO_DB = "sqlite:////data/Durometer.db"
+
 
 # Створюємо engine 
 engine = create_engine(
-    DUROMETER_DB,
+    DURO_DB,
     echo=True,
     connect_args={"check_same_thread": False}  # потрібно для SQLite + багатопоточного доступу
 )
 
 # Створюємо фабрику сесій
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocalDuro = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Dependency для роутерів
-def get_db():
-    db: Session = SessionLocal()
+def get_duro_db():
+    db: Session = SessionLocalDuro()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+# ================================================================
+PSS_DB = "sqlite:////data/PSS.db"
+
+# Створюємо engine 
+engine = create_engine(
+    PSS_DB,
+    echo=True,
+    connect_args={"check_same_thread": False}  # потрібно для SQLite + багатопоточного доступу
+)
+
+# Створюємо фабрику сесій
+SessionLocalPss = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Dependency для роутерів
+def get_pss_db():
+    db: Session = SessionLocalPss()
     try:
         yield db
     finally:
         db.close()
 
 # ================================================================
-TSS_DB = "sqlite:////data/Users.db"
+USERS_DB = "sqlite:////data/Users.db"
 
 engine_users = create_engine(
-    TSS_DB,
+    USERS_DB,
     echo=True,
     connect_args={"check_same_thread": False}  # потрібно для SQLite + багатопоточного доступу
 )
 
-SessionLocalPss = sessionmaker(autocommit=False, autoflush=False, bind=engine_users)
+SessionLocalUsers = sessionmaker(autocommit=False, autoflush=False, bind=engine_users)
 
-def get_db_users():
-    db: Session = SessionLocalPss()
+def get_users_db():
+    db: Session = SessionLocalUsers()
     try:
         yield db
     finally:

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+
+{% if psets and psets|length %}
+  {% for pset in psets %}
+    {% set d = pset.t.days %} {% set h = pset.t.seconds // 3600 %} {% set m = (pset.t.seconds % 3600) // 60 %} 
+    <article>
+      <header>
+        <h4>
+          {{ pset.title }}
+          <small>(закриється через {{d}} днів {{h}} годин {{m}} хвилин)</small>
+        </h4>
+      </header>
+
+      <ul>
+        {% for problem in pset.headers %}
+          <li>
+            <a href="/solving/problem/{{ problem.id }}/{{ pset.title }}">
+              <span>{{ problem.title }} <small>/{{ problem.attr }}</small></span><br>
+
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  {% endfor %}
+{% else %}
+  <p><em>Задач немає.</em></p>
+{% endif %}
+
+
+{% endblock %}

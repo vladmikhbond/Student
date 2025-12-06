@@ -11,7 +11,7 @@ from fastapi.security import APIKeyCookie
 from jose import jwt
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from ..dal import get_db_users  # Функція для отримання сесії БД
+from ..dal import get_users_db  # Функція для отримання сесії БД
 from ..models.pss_models import User
 import bcrypt
 
@@ -35,7 +35,7 @@ async def get_login(request: Request):
 @router.post("/")
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(), 
-    db_users: Session = Depends(get_db_users),
+    db_users: Session = Depends(get_users_db),
 ):
     user = get_authenticated_user(form_data.username, form_data.password, db_users)
     if not user:
@@ -101,8 +101,3 @@ def get_current_user(token: str = Security(cookie_scheme)):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-def get_current_tutor(token: str = Security(cookie_scheme)):
-    user = get_current_user(token)
-    if user.role != "tutor":
-        raise HTTPException(status_code=401, detail="You are not a tutor.")
-    return user

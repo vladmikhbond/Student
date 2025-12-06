@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ problem.title }}{% endblock %}
+
+{% block content %}
+<main class="container">
+  <h3>{{ problem.title }} <small> ({{ problem.lang }})</small></h3>
+  <div>
+    {{ problem.cond }}
+  </div>
+  <div id="editor" style="height: 460px; width: 100%; border: 1px solid; margin: 5px 0 5px 0;"></div>
+
+  <div>
+    <button id="checkButton">Перевірити</button>
+    <img id="checkImage" src="/static/img/check-img.png" style="height: 70px; display: none;">
+  </div>
+  
+  <textarea id="message" style="color: red;"></textarea>
+  <input type="hidden" id="problemId" value="{{ problem.id }}">
+  </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/mode-{{ problem.lang }}.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/theme-twilight.min.js"></script>
+
+<script>
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/{{ problem.lang }}");
+    editor.setValue(`{{ problem.view|safe }}`);
+    editor.setFontSize(14);
+
+    const checkButton = document.getElementById("checkButton");
+    const checkImage = document.getElementById("checkImage");
+    const problemId = document.getElementById("problemId");
+    const message = document.getElementById("message");
+    
+    checkButton.addEventListener("click", async () => {
+        const payload = {
+            id: problemId.value,
+            solving: editor.getValue()
+        };
+
+        try {
+            const response = await fetch("/check", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+
+            // display check answer
+            const check_mes = await response.json();           
+            // let check_mes = data.message || data;
+            let ok = check_mes.slice(0, 4).indexOf("OK") != -1;
+            message.style.color = ok ? "green" : "red";
+            message.innerHTML = check_mes;
+            checkImage.style.display = ok ? "inline" : "none";
+
+        } catch (err) {
+            console.error("Request failed:", err);
+            message.innerHTML = "Помилка: " + err.message;
+        }
+    });
+</script>
+
+{% endblock %}
