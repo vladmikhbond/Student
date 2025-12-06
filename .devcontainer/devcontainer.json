@@ -1,0 +1,24 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
+{
+	"build": {
+		"dockerfile": "../Dockerfile.dev"
+	},
+
+	"mounts": [
+		"source=C:\\Git\\PY\\DBconverter,target=/data,type=bind"	
+    ],
+
+	"runArgs": [
+		"--network",
+		"mynet"
+	],
+
+	"containerEnv": {
+		"SECRET_KEY": "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7",
+		"ALGORITHM": "HS256",
+		"PSS_HOST": "http://pss_cont:7000" 
+	}
+
+	, "postCreateCommand": "python run.py"
+}

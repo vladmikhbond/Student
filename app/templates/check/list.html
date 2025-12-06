@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+    
+
+
+{% if seances and seances|length %}
+<h1>Come on</h1>
+<ul class="emoji-bullets">
+  
+    {% for seance in seances %}
+    <li class="emoji-bullets">
+      <a href="/check/run/{{seance.id}}" style="color:{{seance.color}};" >{{ seance.title }}</a>
+    </li>
+    {% endfor %}
+  
+</ul>
+{% else %}
+  <h2>No tests for you.</h2>
+{% endif %}
+
+{% endblock %}

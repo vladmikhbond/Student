@@ -1,0 +1,62 @@
+/* однакова висота кнопок схвалення і відмови на формах */
+footer.grid button,
+footer.grid a[role="button"] {
+    height: 3rem; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-error {
+    color: red;
+}
+
+.small {
+  padding: 4px 8px;        /* менше вертикального простору */
+  line-height: 1;         /* уникнути зайвої висоти рядка */
+  font-size: 0.9rem;      /* за потреби зменшити розмір шрифту */
+  white-space: nowrap;    /* не переносити текст на новий рядок */
+  display: inline-block;
+  height: auto;
+  min-height: 0;
+}
+
+
+  /* Remove default bullets */
+  .emoji-bullets {
+    list-style-type: none; /* Ensure no default bullets */
+    padding-left: 0;
+  }
+
+  /* Add emoji as bullet */
+  .emoji-bullets li::before {
+    content: "😧 ";                  /* Your emoji here */
+    margin-right: 8px;               /* Space between emoji and text */
+  }
+
+  /* ---------------------------------------------------- */
+.noselect {
+   -webkit-touch-callout: none; /* iOS Safari */
+   -webkit-user-select: none; /* Safari */
+   -moz-user-select: none; /* Old versions of Firefox */
+   -ms-user-select: none; /* Internet Explorer/Edge */
+   user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+/* ----------------- home/index view ------------------ */
+
+#questionText {
+   font-size: large;
+   position: relative;
+   width: 100%;
+   z-index: 2;
+   background-color: lightyellow;
+   padding: 10px;
+}
+
+#canvas2 {
+   position: absolute;
+   z-index: 3;
+   display: none;
+}

@@ -1,0 +1,25 @@
+data/
+
+# Python
+__pycache__/
+.mypy_cache/
+
+# VS Code
+
+
+# Uvicorn logs
+*.pid
+
+# Test and coverage
+htmlcov/
+.coverage
+.cache/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Environment variables
+.env.local
+.env.*
+*.tar

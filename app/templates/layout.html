@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/pico.min.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="icon" href="/static/favicon.ico">
+</head>
+<body>
+    <main class="container">
+        <nav>
+        <ul>
+            <li style="color: darkred"><strong>Durometer - вимірює твердість знань</strong></li>
+        </ul>
+        <ul>
+            <li><a href="/check/open_list">Check</a></li>
+            <li><a href="/logout">Bye</a></li>
+        </ul>
+        </nav>
+
+        {% block content %}{% endblock %}
+    </main>
+    {% block script %} {% endblock %}
+</body>
+</html>

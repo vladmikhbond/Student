@@ -1,0 +1,11 @@
+fastapi[standard]
+sqlalchemy
+jinja2>=3.1.0
+python-multipart
+passlib[bcrypt]
+fastapi-sessions
+pyjwt
+pydantic_settings
+python-jose
+
+
