@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <link rel="stylesheet" href="/static/css/pico.min.css">
-</head>
-<body>
-  <main class="container">
-    <form method="post" action="{{ url_for('login') }}">
-      <h3>Durometer</h3>
+{% extends "layout.html" %}
 
+{% block title %}{% endblock %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('login') }}">
+      
       <label for="username">
         Username
         <input type="text" id="username" name="username"
@@ -29,6 +24,4 @@
         <p style="color: var(--del-color);">{{ error }}</p>
       {% endif %}
     </form>
-  </main>
-</body>
-</html>
+{% endblock %}

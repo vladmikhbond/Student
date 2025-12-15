@@ -1,9 +1,16 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ problem.title }}{% endblock %}
+{% block title %}
+    {{ problem.title }}
+{% endblock %}
+
+{% block header %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/mode-{{ problem.lang }}.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/theme-github.min.js"></script>
+{% endblock %}
 
 {% block content %}
-<main class="container">
   <h3>{{ problem.title }} <small> ({{ problem.lang }})</small></h3>
   <div>
     {{ problem.cond }}
@@ -17,14 +24,12 @@
   
   <textarea id="message" style="color: red;"></textarea>
   <input type="hidden" id="problemId" value="{{ problem.id }}">
-  </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/mode-{{ problem.lang }}.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/theme-twilight.min.js"></script>
+{% endblock %}
 
+{% block script %}
 <script>
     const editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setTheme("ace/theme/github");
     editor.session.setMode("ace/mode/{{ problem.lang }}");
     editor.setValue(`{{ problem.view|safe }}`);
     editor.setFontSize(14);

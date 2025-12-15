@@ -2,26 +2,35 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} {% endblock %}</title>
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
     <link rel="stylesheet" href="/static/css/pico.min.css">
     <link rel="stylesheet" href="/static/css/app.css">
-    <link rel="icon" href="/static/favicon.ico">
+    <link rel="icon" href="/static/img/favicon.ico">
+
+    {% block header %}
+    {% endblock %}
 </head>
 <body>
     <main class="container">
         <nav>
         <ul>
-            <li style="color: darkred"><strong>Durometer - вимірює твердість знань</strong></li>
+            <li style="color: darkred"><strong>Все найкраще - студентам</strong></li>
         </ul>
         <ul>
-            <li><a href="/check/open_list">Tests</a></li>
-            <li><a href="/solving">Problems</a></li>
-            <li><a href="/logout">Bye</a></li>
+            <li><a href="/check/open_list">Тести</a></li>
+            <li><a href="/solving">Задачі</a></li>
+            <li><a href="/pass">Пароль</a></li>
+            <li><a href="/logout">Вихід</a></li>
         </ul>
         </nav>
 
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
-    {% block script %} {% endblock %}
+    {% block script %}
+    {% endblock %}
 </body>
 </html>
