@@ -1,11 +1,15 @@
 TODO:
 вирішення задач. 
 Перегляд відкритих лекцій. 
-Зміна паролю.
-
-
-
-
+-----------------------------------
+Що копіювати з ProblemSet:
+---
+routers/solving_router.py
+templates/solving/problem.html
+static/js/solving_problem.js
+models/pss_models.py
+models/schemas.py
+-----------------------------------
 
 --- збірка і запуск продуктового контейнеру pss_cont
 

@@ -1,5 +1,6 @@
-""" All models for PSS.db """
+import re
 from datetime import datetime, timedelta
+from typing import List
 from sqlalchemy import ForeignKey, String, DateTime, Integer, Text, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 
@@ -74,8 +75,15 @@ class Ticket(Base):
     problem: Mapped["Problem"] = relationship(back_populates="tickets")
 
     def do_record(self, solving, check_message):  
-        RECORD = "~0~{0}\n~1~{1}\n~2~{2:%Y-%m-%d %H:%M:%S}\n~3~\n"
-        self.records += RECORD.format(solving, check_message, datetime.now())
+        RECORD_FORMAT = "~0~{0}\n~1~{1}\n~2~{2:%Y-%m-%d %H:%M:%S}\n~3~\n"
+        self.records += RECORD_FORMAT.format(solving, check_message, datetime.now())
         if check_message.startswith("OK") and self.state == 0:
             self.state = 1
     
+    def get_records(self) -> List[dict[str, str]]:
+        """ 
+        Показ вирішень з тікету.
+        """
+        REGEX = r"~0~(.*?)~1~(.*?)~2~(.*?)~3~"
+        matches = re.findall(REGEX, self.records, flags=re.S)
+        return [{"when": m[2], "code":m[0].strip(), "check":m[1].strip()} for m in matches]    

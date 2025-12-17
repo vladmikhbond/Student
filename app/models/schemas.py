@@ -24,7 +24,7 @@ class ProblemSchema(BaseModel):
 
 
 class AnswerSchema(BaseModel):
-    id: str
+    problem_id: str
     solving: str
 
     class Config:
