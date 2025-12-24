@@ -26,17 +26,7 @@ class Problem(Base):
     tickets: Mapped[list["Ticket"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
 
 
-class User(Base):
-    __tablename__ = "users"
 
-    username: Mapped[str] = mapped_column(String, primary_key=True)
-    
-    hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
-    role: Mapped[str] = mapped_column(String)     # 'student', 'tutor', 'admin'
-    # nav
-    tickets: Mapped[list["Ticket"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-
-# =============================================================
 
 class ProblemSet(Base):
     __tablename__ = "problemsets"
@@ -64,14 +54,13 @@ class Ticket(Base):
  
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
-    username: Mapped[str] = mapped_column(String, ForeignKey("users.username", ondelete="CASCADE"))
+    username: Mapped[str] = mapped_column(String)
     problem_id: Mapped[str] = mapped_column(String, ForeignKey("problems.id", ondelete="CASCADE")) 
     records: Mapped[str] = mapped_column(Text, default="")
     comment: Mapped[str] = mapped_column(String)
     expire_time: Mapped[datetime] = mapped_column(DateTime)
     state: Mapped[int] = mapped_column(Integer, default=0) # 1 - problem is solved
     #  nav
-    user: Mapped["User"] = relationship(back_populates="tickets")
     problem: Mapped["Problem"] = relationship(back_populates="tickets")
 
     def do_record(self, solving, check_message):  
@@ -87,3 +76,12 @@ class Ticket(Base):
         REGEX = r"~0~(.*?)~1~(.*?)~2~(.*?)~3~"
         matches = re.findall(REGEX, self.records, flags=re.S)
         return [{"when": m[2], "code":m[0].strip(), "check":m[1].strip()} for m in matches]    
+    
+
+class User(Base):
+    __tablename__ = "users"
+
+    username: Mapped[str] = mapped_column(String, primary_key=True)
+    
+    hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
+    role: Mapped[str] = mapped_column(String)     # 'student', 'tutor', 'admin'
