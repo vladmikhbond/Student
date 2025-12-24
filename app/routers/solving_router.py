@@ -6,8 +6,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
-from .login_router import get_current_user, PSS_HOST
-from ..models.schemas import ProblemHeaderSchema, AnswerSchema
+from .login_router import get_current_user, JUDGE
+from ..models.schemas import AnswerSchema
 from ..dal import get_pss_db  # Функція для отримання сесії БД
 from ..models.pss_models import Problem, ProblemSet, Ticket, User
 
@@ -21,9 +21,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# ------------------------------ list
 
 @router.get("/solving")
-async def get_solveing(
+async def get_solving_list(
     request: Request,
     db: Session = Depends(get_pss_db),
     user: User=Depends(get_current_user)
@@ -44,36 +45,23 @@ async def get_solveing(
             "error": "No token"
         })
 
-    headers = {"Authorization": f"Bearer {token}"}
     psets = []
     for problemset in open_problemsets:
-        pheaders = []
-        for id in problemset.problem_ids.split():
-            api_url = f"{PSS_HOST}/api/problems/{id}"
-            async with httpx.AsyncClient() as client:
-                response = await client.get(api_url, headers=headers)
-                if response.is_success:
-                    json = response.json()                    
-
-                    problem_header = ProblemHeaderSchema(
-                        id=json["id"], 
-                        title=json["title"], 
-                        attr=json["attr"])
-                    pheaders.append(problem_header)
-
-        rest_time: timedelta = problemset.open_time - \
-            datetime.now() + timedelta(minutes=problemset.open_minutes)
+        ids = problemset.problem_ids.split()
+        problems = db.query(Problem).filter(Problem.id.in_(ids)).all()
+        rest_time: timedelta = problemset.open_time - datetime.now() + timedelta(minutes=problemset.open_minutes)
         psets.append({
             "title": problemset.title,         #TODO  encode
             "username": problemset.username,
             "t": rest_time,
-            "headers": pheaders})
+            "problems": problems})
 
     return templates.TemplateResponse("solving/list.html", {"request": request, "psets": psets})
 
+# ---------------------------- open 
 
 @router.get("/solving/problem/{problem_id}/{pset_title}")  
-async def get_solveing_problem(
+async def get_soleing_problem(
     problem_id: str,
     pset_title: str,
     request: Request,
@@ -110,7 +98,8 @@ async def get_solveing_problem(
             db.rollback()
             err_mes = f"Error during a ticket creating: {e}"
             logger(err_mes)
-    # show last solving
+
+    # show the ticket solving
     else:
         records = ticket.get_records()
         if len(records) > 1:
@@ -126,18 +115,22 @@ async def get_solveing_problem(
 
 @router.post("/check")
 async def post_check(
-    answer: AnswerSchema, 
+    answer: AnswerSchema,
     db: Session = Depends(get_pss_db),
     user: User=Depends(get_current_user)
 ) -> str:
     """
-    Відправляє рішення задачі на перевірку до PSS і повертає відповідь від PSS.
+    Відправляє рішення задачі на перевірку до judje і повертає відповідь .
     Додає в тіскет рішення і відповідь. 
+    Приймає JSON у тілі у форматі AnswerSchema.
     """
-    
+
+    problem_id = answer.problem_id
+    solving = answer.solving
+
     # get a ticket
     ticket = db.query(Ticket) \
-        .filter(and_(Ticket.username == user.username, Ticket.problem_id == answer.problem_id)) \
+        .filter(and_(Ticket.username == user.username, Ticket.problem_id == problem_id)) \
         .first()
                               
     if ticket is None:
@@ -145,21 +138,34 @@ async def post_check(
     if ticket.expire_time < datetime.now():
         return "Your time is over."
 
-    api_url = f"{PSS_HOST}/api/check"
-    data = {"id": answer.problem_id, "solving": answer.solving}
+    problem = ticket.problem
+    
+    # Replace author's solving with user's one
+    regex = regex_helper(problem.lang);
+    if regex == None:
+       return "Wrong Language" 
+    newCode = re.sub(regex, solving, problem.code, count=1, flags=re.DOTALL)
 
+    # Check user's solving
+    payload = {"code": newCode, "timeout": 2000}
+    url = JUDGE[problem.lang]
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.post(api_url, json=data)
-        check_message: str = response.json()
+            response = await client.post(url, json=payload)
+        check_message = response.text
     except Exception as e:
-        err_message = f"Error during a check solving: {e}"
-        print(err_message)
-        return err_message
+        return f"Error during a check solving: {e}"
   
-    # write solving to the ticket
-    ticket.do_record(answer.solving, check_message)
+    # Write solving to the ticket
+    ticket.do_record(solving, check_message)
     db.commit()
     return check_message
 
 
+def regex_helper(lang:str):
+    if lang == 'js' or lang == 'cs':
+        return r"//BEGIN.*//END"
+    elif lang == 'py':
+        return r"#BEGIN.*#END"
+    else:
+        return None

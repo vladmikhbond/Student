@@ -10,17 +10,16 @@
     <article>
       <header>
         <h4>
-          Задачник {{ pset.title }}
+          {{ pset.title }}
           <small>(закриється через {{d}} днів {{h}} годин {{m}} хвилин)</small>
         </h4>
       </header>
 
       <ul>
-        {% for problem in pset.headers %}
+        {% for problem in pset.problems %}
           <li>
             <a href="/solving/problem/{{ problem.id }}/{{ pset.title }}">
               <span>{{ problem.title }} <small>/{{ problem.attr }}</small></span><br>
-
             </a>
           </li>
         {% endfor %}

@@ -1,25 +1,22 @@
 TODO:
 вирішення задач. 
 Перегляд відкритих лекцій. 
+
 -----------------------------------
 Що копіювати з ProblemSet:
 ---
-routers/solving_router.py
+routers/solving_router.py         
+    рядок  redirect = RedirectResponse("/seance/list", status_code=302) : "/seance/list" замінити на "/solving"
 templates/solving/problem.html
+templates/solving/list.html
 static/js/solving_problem.js
 models/pss_models.py
 models/schemas.py
 -----------------------------------
 
---- збірка і запуск продуктового контейнеру pss_cont
-
-cd c:\git\dock\psscont
-docker build -t pss_img .
-docker run --env-file .env --network mynet -p 7000:7000 -v C:\Git\PY\DBconverter:/data   --name pss_cont  pss_img
-
 --- збірка і запуск продуктового контейнеру stud_cont
 
 cd c:\git\dock\Student
 docker build -t stud_img .
-docker run --env-file .env --network mynet -p 7004:7004 -v C:\Git\PY\DBconverter:/data   --name pset_cont  stud_img
+docker run --env-file env --network mynet -p 7004:7004 -v C:\Git\PY\DBconverter:/data   --name pset_cont  stud_img
 ---

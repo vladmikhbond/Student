@@ -17,14 +17,71 @@ from ..models.pss_models import User
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 TOKEN_LIFETIME = int(os.getenv("TOKEN_LIFETIME"))
-PSS_HOST = os.getenv("PSS_HOST")
+TOKEN_URL = os.getenv("TOKEN_URL")
+
+JUDGE = {"cs": "http://judge_cs_cont:7010/verify",
+         "py": "http://judge_py_cont:7011/verify",
+         "js": "http://judge_js_cont:7012/verify"}
 
 # шаблони Jinja2
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter()
 
-# =============================== aux ==================================
+# ----------------------- login
+
+@router.get("/")
+async def get_login(request: Request):
+    return templates.TemplateResponse("login/login.html", {"request": request})
+
+
+@router.post("/")
+async def login(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+):
+    client = httpx.AsyncClient()
+    try:
+        client_response = await client.post(
+                TOKEN_URL, data={"username": username, "password": password})
+    except httpx.RequestError as e:
+        raise HTTPException(500, e)
+    finally:
+        await client.aclose()
+
+    if client_response.is_success:
+        token = client_response.json()
+    else: 
+        return templates.TemplateResponse("login.html", {
+            "request": request, 
+            "error": f"Invalid credentials. Response status_code: {client_response.status_code}"
+        })
+
+    redirect = RedirectResponse("/solving", status_code=302)
+
+    # Встановлюємо cookie у відповідь
+    redirect.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,        # ❗ Забороняє доступ з JS
+        # secure=True,        # ❗ Передавати лише по HTTPS
+        samesite="lax",       # ❗ Захист від CSRF
+        max_age=TOKEN_LIFETIME * 60,  # in seconds 
+    )
+    return redirect
+
+# ----------------------------------- logout
+
+@router.get("/logout")
+async def logout(response: Response, request: Request):
+    response.delete_cookie(
+        key="access_token"
+    )
+    return templates.TemplateResponse("/login/login.html", {"request": request} )
+
+
+# --------------------------- aux
 
 # описуємо джерело токена (cookie)
 cookie_scheme = APIKeyCookie(name="access_token")
@@ -38,9 +95,6 @@ def get_current_user(token: str = Security(cookie_scheme)):
         raise HTTPException(status_code=401, detail="Invalid token")
     else:
         return User(username=payload.get("sub"), role=payload.get("role"))
-
-
-
 
 # ----------------------- password
 
@@ -69,60 +123,5 @@ async def post_pass (
         return templates.TemplateResponse("login/pass.html", {"request": request, "error": error}) 
      
     return templates.TemplateResponse("login/login.html", {"request": request})
-# ----------------------- login
 
-@router.get("/")
-async def get_login(request: Request):
-    return templates.TemplateResponse("login/login.html", {"request": request})
-
-
-@router.post("/")
-async def login(
-    request: Request,
-    username: str = Form(...),
-    password: str = Form(...),
-):
-    url = f"{PSS_HOST}/token"
-    data = {"username": username, "password": password}
-
-    client = httpx.AsyncClient()
-    try:
-        pss_response = await client.post(url, data=data)
-    except httpx.RequestError as e:
-        raise HTTPException(500, f"{e}\nА чи працює pss_cont на :7000 у мережі докера mynet?")
-    finally:
-        await client.aclose()
-
-    if pss_response.is_success:
-        answer_json = pss_response.json()
-        token = answer_json["access_token"]
-    else: 
-        return templates.TemplateResponse("login/login.html", {
-            "request": request, 
-            "error": f"Invalid credentials. Response status_code: {pss_response.status_code}"
-        })
-
-    redirect = RedirectResponse("/check/open_list", status_code=302)
-
-    # Встановлюємо cookie у відповідь
-    redirect.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,        # ❗ Забороняє доступ з JS
-        # secure=True,        # ❗ Передавати лише по HTTPS
-        samesite="lax",       # ❗ Захист від CSRF
-        max_age=TOKEN_LIFETIME * 60,  # in seconds 
-    )
-    return redirect    
-
-# ----------------------------------- logout
-
-@router.get("/logout")
-async def logout(response: Response, request: Request):
-    response.delete_cookie(
-        key="access_token"
-    )
-    return templates.TemplateResponse("/login/login.html", {"request": request} )
-
-    return {"message": "Session ended"}   
 
