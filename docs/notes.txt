@@ -3,15 +3,18 @@ TODO:
 Перегляд відкритих лекцій. 
 
 -----------------------------------
-Що копіювати з ProblemSet:
----
-routers/solving_router.py         
-    рядок  redirect = RedirectResponse("/seance/list", status_code=302) : "/seance/list" замінити на "/solving"
+# Що копіювати з ProblemSet:
+
+routers/solving_router.py
+templates/solving/list.html        
 templates/solving/problem.html
-templates/solving/list.html
 static/js/solving_problem.js
 models/pss_models.py
 models/schemas.py
+-----------------------------------
+# Що копіювати з PDurometer:
+
+
 -----------------------------------
 
 --- збірка і запуск продуктового контейнеру stud_cont

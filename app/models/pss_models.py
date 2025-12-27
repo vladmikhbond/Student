@@ -26,6 +26,13 @@ class Problem(Base):
     tickets: Mapped[list["Ticket"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    username: Mapped[str] = mapped_column(String, primary_key=True)
+    
+    hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
+    role: Mapped[str] = mapped_column(String)     # 'student', 'tutor', 'admin'
 
 
 class ProblemSet(Base):
@@ -63,6 +70,7 @@ class Ticket(Base):
     #  nav
     problem: Mapped["Problem"] = relationship(back_populates="tickets")
 
+
     def do_record(self, solving, check_message):  
         RECORD_FORMAT = "~0~{0}\n~1~{1}\n~2~{2:%Y-%m-%d %H:%M:%S}\n~3~\n"
         self.records += RECORD_FORMAT.format(solving, check_message, datetime.now())
@@ -75,13 +83,4 @@ class Ticket(Base):
         """
         REGEX = r"~0~(.*?)~1~(.*?)~2~(.*?)~3~"
         matches = re.findall(REGEX, self.records, flags=re.S)
-        return [{"when": m[2], "code":m[0].strip(), "check":m[1].strip()} for m in matches]    
-    
-
-class User(Base):
-    __tablename__ = "users"
-
-    username: Mapped[str] = mapped_column(String, primary_key=True)
-    
-    hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
-    role: Mapped[str] = mapped_column(String)     # 'student', 'tutor', 'admin'
+        return [{"when": m[2], "code":m[0].strip(), "check":m[1].strip()} for m in matches]

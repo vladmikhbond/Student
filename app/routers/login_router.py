@@ -73,12 +73,11 @@ async def login(
 
 # ----------------------------------- logout
 
-@router.get("/logout")
-async def logout(response: Response, request: Request):
-    response.delete_cookie(
-        key="access_token"
-    )
-    return templates.TemplateResponse("/login/login.html", {"request": request} )
+@router.get("/login/logout")
+async def logout(request: Request):
+    resp = templates.TemplateResponse("login/login.html", {"request": request})
+    resp.delete_cookie("access_token", path="/")
+    return resp
 
 
 # --------------------------- aux
