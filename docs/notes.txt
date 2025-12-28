@@ -5,15 +5,20 @@ TODO:
 -----------------------------------
 # Що копіювати з ProblemSet:
 
+models/pss_models.py
+models/schemas.py
 routers/solving_router.py
 templates/solving/list.html        
 templates/solving/problem.html
 static/js/solving_problem.js
-models/pss_models.py
-models/schemas.py
 -----------------------------------
-# Що копіювати з PDurometer:
 
+# Що копіювати з Durometer:
+
+models/models.py
+routers/check_router.py
+templates/check  (4 files)
+static/js/check_run.js
 
 -----------------------------------
 

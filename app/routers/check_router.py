@@ -1,7 +1,6 @@
 import re, random
-import itertools as it
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from datetime import datetime, timedelta
@@ -10,8 +9,7 @@ from sqlalchemy.orm import Session
 from ..models.pss_models import User
 from ..models.utils import result_from_ticket
 from ..models.models import Seance, Ticket, Question
-from ..dal import get_duro_db  # Функція для отримання сесії БД
-
+from ..dal import get_db  # Функція для отримання сесії БД
 from .login_router import get_current_user
 
 # шаблони Jinja2
@@ -24,7 +22,7 @@ router = APIRouter()
 @router.get("/check/open_list")
 async def get_check_open_list(
     request: Request, 
-    db: Session = Depends(get_duro_db),
+    db: Session = Depends(get_db),
     user: User=Depends(get_current_user)
 ):
     """ 
@@ -48,7 +46,7 @@ async def get_check_open_list(
 async def get_check_run(
     seance_id: int,
     request: Request, 
-    db: Session = Depends(get_duro_db),
+    db: Session = Depends(get_db),
     user: User=Depends(get_current_user) 
 ):
     seance = db.get(Seance, seance_id)
@@ -90,7 +88,7 @@ async def get_check_run(
 async def post_check_run(
     seance_id: int,
     request: Request, 
-    db: Session = Depends(get_duro_db),
+    db: Session = Depends(get_db),
     user: User = Depends(get_current_user) 
 ):
     seance = db.get(Seance, seance_id)
@@ -121,15 +119,21 @@ async def post_check_run(
 
 @staticmethod
 def stopTemplateResponse(db, role, request, ticket, reason):
+    """
+    Завершує тестування.
+    """
     vm = {"title": f"{ticket.seance.title}", 
         "percentage": result_from_ticket(db, ticket)[0],
         "reason": reason }
-    url = "check/stop.html" if role == "tutor" else "check/stop.html"
+    url = "check/stop.html" if role == "tutor" else "check/stop_student.html"
     return templates.TemplateResponse(url, {"request": request, "vm":vm})    
 
 
 @staticmethod
 def runTemplateResponse(db, role, request: Request, ticket: Ticket):
+    """
+    Продовжує тестування.
+    """
     question_id = ticket.next_question_id
     if question_id is None:
         return stopTemplateResponse(db, role, request, ticket, "Тест завершений.")

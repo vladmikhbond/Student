@@ -1,13 +1,11 @@
-
 from datetime import datetime, timedelta
-import json
 from typing import List
 from sqlalchemy import ForeignKey, String, DateTime, Integer, Text, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 
-
 class Base(DeclarativeBase):
     pass
+
 
 class Question(Base):
     __tablename__ = "questions"
@@ -57,8 +55,7 @@ class Seance(Base):
     @property
     def ids_list(self) -> List[int]:
         return [int(i) for i in self.question_ids.split()]
-        
-    
+            
 
 class Ticket(Base):
     __tablename__ = "tickets"
