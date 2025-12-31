@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from ..models.pss_models import User
 from ..models.utils import result_from_ticket
 from ..models.models import Seance, Ticket, Question
-from ..dal import get_db  # Функція для отримання сесії БД
+from ..dal import get_duro_db  # Функція для отримання сесії БД
 from .login_router import get_current_user
 
 # шаблони Jinja2
@@ -22,7 +22,7 @@ router = APIRouter()
 @router.get("/check/open_list")
 async def get_check_open_list(
     request: Request, 
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_duro_db),
     user: User=Depends(get_current_user)
 ):
     """ 
@@ -46,7 +46,7 @@ async def get_check_open_list(
 async def get_check_run(
     seance_id: int,
     request: Request, 
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_duro_db),
     user: User=Depends(get_current_user) 
 ):
     seance = db.get(Seance, seance_id)
@@ -88,7 +88,7 @@ async def get_check_run(
 async def post_check_run(
     seance_id: int,
     request: Request, 
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_duro_db),
     user: User = Depends(get_current_user) 
 ):
     seance = db.get(Seance, seance_id)

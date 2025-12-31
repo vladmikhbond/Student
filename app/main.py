@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from .routers import \
-login_router, check_router, solving_router
+from .routers import login_router, check_router, solving_router
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()

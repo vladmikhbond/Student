@@ -6,8 +6,8 @@
 	},
 
 	"mounts": [
-		"source=C:\\Git\\PY\\DBconverter,target=/data,type=bind"	
-    ],
+		"source=C:\\docker_bag\\data,target=/data,type=bind"	
+	],
 
 	"runArgs": [
 		"--network",

@@ -40,6 +40,8 @@ class Seance(Base):
     open_time: Mapped[datetime] = mapped_column(DateTime, default=None)
     open_minutes: Mapped[int] = mapped_column(Integer, default=0)   
     stud_filter: Mapped[str] = mapped_column(String, default='')
+    defence: Mapped[str] = mapped_column(String)                     # "1, 100"
+
     # nav
     tickets: Mapped[List["Ticket"]] = relationship(back_populates="seance", cascade="all, delete-orphan")
     
@@ -55,6 +57,14 @@ class Seance(Base):
     @property
     def ids_list(self) -> List[int]:
         return [int(i) for i in self.question_ids.split()]
+    
+    @property
+    def focus(self) -> int:
+        return int(self.defence.split(',')[0]) 
+    
+    @property
+    def hole(self) -> int:
+        return int(self.defence.split(',')[1]) 
             
 
 class Ticket(Base):
