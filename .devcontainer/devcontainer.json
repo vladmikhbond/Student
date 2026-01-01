@@ -21,6 +21,5 @@
 		"TOKEN_URL": "http://tutor_cont:7003/token/"
 	},
 
-
-	, "postCreateCommand": "python run.py"
+	"postCreateCommand": "python run.py"
 }
