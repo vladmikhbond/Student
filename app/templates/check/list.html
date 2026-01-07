@@ -5,7 +5,7 @@
 {% block content %}
 
 {% if seances and seances|length %}
-<h1>Come on</h1>
+<p><em>Під час тестування не полишайте вкладку браузера і не згортайте її.</em></p>>
 <ul class="emoji-bullets">
   
     {% for seance in seances %}
@@ -16,7 +16,7 @@
   
 </ul>
 {% else %}
-  <h2>No tests for you.</h2>
+   <p><em>Тестів немає.</em></p>
 {% endif %}
 
 {% endblock %}
