@@ -50,7 +50,7 @@ class ProblemSet(Base):
         if self.open_time is None or self.open_minutes is None:
             return False
         limit: datetime = self.open_time + timedelta(minutes=self.open_minutes)
-        return limit > datetime.now()
+        return self.open_time < datetime.now() < limit 
     
     def exspire_time(self):
         return self.open_time + timedelta(minutes=self.open_minutes)

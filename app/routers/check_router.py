@@ -31,9 +31,10 @@ async def get_check_open_list(
     all = db.query(Seance).all()
     seances = []
     for s in all:
+        opened = s.open_time < datetime.now() 
         not_expired = s.open_time + timedelta(minutes=s.open_minutes) > datetime.now()
         matched = re.match(s.stud_filter, user.username) 
-        if not_expired and matched:
+        if opened and not_expired and matched:
             tickets = list(filter(lambda t: t.username == user.username, s.tickets))
             s.color = "black" if len(tickets) == 0 else "gray"
             seances.append(s)
