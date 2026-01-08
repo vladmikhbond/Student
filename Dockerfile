@@ -4,7 +4,6 @@ FROM python:3.12-slim
 
 # Копіюємо requirements.txt у контейнер 
 COPY requirements.txt /tmp/requirements.txt
-COPY run.py /run.py
 COPY app /app
 
 # Встановлюємо Python-залежності

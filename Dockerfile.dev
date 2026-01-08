@@ -4,7 +4,6 @@ FROM mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
 
 
 COPY requirements.txt /tmp/requirements.txt
-COPY run.py /run.py
 COPY app /app
 
 

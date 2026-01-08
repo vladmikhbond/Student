@@ -21,5 +21,5 @@
 		"TOKEN_URL": "http://tutor_cont:7003/token/"
 	},
 
-	"postCreateCommand": "python run.py"
+	"postCreateCommand": "uvicorn app.main:app --host 127.0.0.1 --port 7004"
 }
