@@ -35,7 +35,7 @@ footer.grid a[role="button"] {
 
   /* Add emoji as bullet */
   .emoji-bullets li::before {
-    content: "😧 ";                  /* Your emoji here */
+    content: "🎲 ";                  /* Your emoji here */
     margin-right: 8px;               /* Space between emoji and text */
   }
 
