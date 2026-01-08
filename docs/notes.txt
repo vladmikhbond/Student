@@ -3,8 +3,8 @@ TODO:
 Перегляд відкритих лекцій. 
 🎲
 
-  git config --global user.email "vladmikhbond@gmale.com"
-  git config --global user.name "vladmikhbond"
+git config --global user.email "vladmikhbond@gmale.com"
+git config --global user.name "vladmikhbond"
 
 
 -----------------------------------
