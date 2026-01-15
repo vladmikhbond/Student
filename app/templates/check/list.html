@@ -4,13 +4,19 @@
 
 {% block content %}
 
-{% if seances and seances|length %}
-<p><em>Під час тестування не полишайте вкладку браузера і не згортайте її.</em></p>>
+{% if seances and seances|length or futures and futures|length %}
+<p><em>Під час тестування не полишайте вкладку браузера і не згортайте її.</em></p>
 <ul class="emoji-bullets">
   
     {% for seance in seances %}
     <li class="emoji-bullets">
       <a href="/check/run/{{seance.id}}" style="color:{{seance.color}};" >{{ seance.title }}</a>
+    </li>
+    {% endfor %}
+<p>
+    {% for future in futures %}
+    <li class="emoji-bullets">
+      О {{future.kyiv_time}} буде тест {{ future.title }}
     </li>
     {% endfor %}
   

@@ -1,4 +1,5 @@
 import re, random
+from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -29,17 +30,27 @@ async def get_check_open_list(
     Усі відкриті сеанси, доступні поточному юзеру (студенту).
     """
     all = db.query(Seance).all()
+    now = datetime.now()
     seances = []
+    futures = []
+    
     for s in all:
-        opened = s.open_time < datetime.now() 
-        not_expired = s.open_time + timedelta(minutes=s.open_minutes) > datetime.now()
-        matched = re.match(s.stud_filter, user.username) 
-        if opened and not_expired and matched:
-            tickets = list(filter(lambda t: t.username == user.username, s.tickets))
+        matched = re.match(s.stud_filter, user.username)
+        if not matched:
+            continue
+        tickets = list(filter(lambda t: t.username == user.username, s.tickets))
+        is_open = s.open_time < now < s.open_time + timedelta(minutes=s.open_minutes)
+        is_soon = now < s.open_time < now + timedelta(minutes=10) 
+
+        if is_open:
             s.color = "black" if len(tickets) == 0 else "gray"
             seances.append(s)
 
-    return templates.TemplateResponse("check/list.html", {"request": request, "seances": seances})
+        elif is_soon and len(tickets) == 0:
+            s.kyiv_time = s.open_time.astimezone(ZoneInfo("Europe/Kyiv")).strftime("%H:%M")
+            futures.append(s)
+
+    return templates.TemplateResponse("check/list.html", {"request": request, "seances": seances, "futures": futures})
 
 # --------------------------- run 
 

@@ -53,7 +53,7 @@ async def login(
     if client_response.is_success:
         token = client_response.json()
     else: 
-        return templates.TemplateResponse("login.html", {
+        return templates.TemplateResponse("login/login.html", {
             "request": request, 
             "error": f"Invalid credentials. Response status_code: {client_response.status_code}"
         })
