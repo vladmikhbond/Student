@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+
+{% if dirs and dirs|length %}
+  <h2>Дисципліни</h2>
+  {% for dir in dirs %}
+    <div>
+      <a href="/public/{{dir}}/index.html">{{dir}}</a>
+    </div>      
+  {% endfor %}
+{% else %}
+  <p><em>Лекцій немає.</em></p>
+{% endif %}
+
+
+{% endblock %}
