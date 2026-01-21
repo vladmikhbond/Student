@@ -65,7 +65,6 @@ class Seance(Base):
     @property
     def hole(self) -> int:
         return int(self.defence.split(',')[1]) 
-            
 
 class Ticket(Base):
     __tablename__ = "tickets"

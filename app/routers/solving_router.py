@@ -34,7 +34,7 @@ async def get_solving_list(
     Враховуються лише відкриті та доступні поточному юзеру задачники.
     """
     problemsets: list[ProblemSet] = db.query(ProblemSet).all()
-    open_problemsets = [ps for ps in problemsets if ps.is_open() and re.match(ps.stud_filter, user.username)]
+    open_problemsets = [ps for ps in problemsets if ps.is_open and re.match(ps.stud_filter, user.username)]
 
     token = request.cookies["access_token"]
 
@@ -47,23 +47,24 @@ async def get_solving_list(
 
     psets = []
     for problemset in open_problemsets:
-        ids = problemset.problem_ids.split()
+        ids = problemset.get_problem_ids()
         problems = db.query(Problem).filter(Problem.id.in_(ids)).all()
-        rest_time: timedelta = problemset.open_time - datetime.now() + timedelta(minutes=problemset.open_minutes)
+    
         psets.append({
-            "title": problemset.title,         #TODO  encode
+            "id": problemset.id,
+            "title": problemset.title,
             "username": problemset.username,
-            "t": rest_time,
+            "rest": problemset.rest_time,
             "problems": problems})
 
     return templates.TemplateResponse("solving/list.html", {"request": request, "psets": psets})
 
 # ---------------------------- open 
 
-@router.get("/solving/problem/{problem_id}/{pset_title}")  
-async def get_soleing_problem(
+@router.get("/solving/problem/{problem_id}/{pset_id}")  
+async def get_solving_problem(
     problem_id: str,
-    pset_title: str,
+    pset_id: str,
     request: Request,
     db: Session = Depends(get_pss_db),
     user: User=Depends(get_current_user)
@@ -81,15 +82,15 @@ async def get_soleing_problem(
 
     # create a new ticket
     if ticket is None:
-        problemset:ProblemSet = db.query(ProblemSet).get(pset_title)
+        problemset:ProblemSet = db.get(ProblemSet, pset_id) 
         ticket = Ticket(
             username=user.username, 
             problem_id=problem_id, 
             records="",
             comment="",
-            expire_time=problemset.exspire_time(),            
+            expire_time=problemset.close_time,            
         )
-        ticket.do_record("Вперше побачив задачу.", "User saw the task for the first time.");
+        ticket.add_record("Вперше побачив задачу.", "User saw the task for the first time.");
 
         try:
             db.add(ticket)
@@ -154,10 +155,10 @@ async def post_check(
             response = await client.post(url, json=payload)
         check_message = response.text
     except Exception as e:
-        return f"Error during a check solving: {e}"
+        return f"Error. Is url '{url}' responding?"
   
     # Write solving to the ticket
-    ticket.do_record(solving, check_message)
+    ticket.add_record(solving, check_message)
     db.commit()
     return check_message
 

@@ -6,7 +6,9 @@
 
 {% if psets and psets|length %}
   {% for pset in psets %}
-    {% set d = pset.t.days %} {% set h = pset.t.seconds // 3600 %} {% set m = (pset.t.seconds % 3600) // 60 %} 
+    {% set d = pset.rest.days %} 
+    {% set h = pset.rest.seconds // 3600 %} 
+    {% set m = (pset.rest.seconds % 3600) // 60 %} 
     <article>
       <header>
         <h4>
@@ -18,7 +20,7 @@
       <ul>
         {% for problem in pset.problems %}
           <li>
-            <a href="/solving/problem/{{ problem.id }}/{{ pset.title }}">
+            <a href="/solving/problem/{{ problem.id }}/{{ pset.id }}">
               <span>{{ problem.title }} <small>/{{ problem.attr }}</small></span><br>
             </a>
           </li>
