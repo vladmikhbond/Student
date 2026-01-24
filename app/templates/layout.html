@@ -21,8 +21,8 @@
         </ul>
         <ul>
             <li><a href="/disc/list">Лекції</a></li>
-            <li><a href="/check/open_list">Тести</a></li>
-            <li><a href="/solving">Задачі</a></li>
+            <li><a id="check">Тести</a></li>
+            <li><a id="solving">Задачі</a></li>
             <li><a href="/pass">Пароль</a></li>
             <li><a href="/login/logout">Вихід</a></li>
         </ul>
@@ -32,6 +32,13 @@
         {% endblock %}
     </main>
     {% block script %}
+    <script>
+        const solving = document.getElementById("solving");
+        solving.href = location.origin.replace("7004","7001/solving")
+
+        const check = document.getElementById("check");
+        check.href = location.origin.replace("7004","7002/check/open_list")  
+    </script>
     {% endblock %}
 </body>
 </html>

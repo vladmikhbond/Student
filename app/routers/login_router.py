@@ -58,7 +58,7 @@ async def login(
             "error": f"Invalid credentials. Response status_code: {client_response.status_code}"
         })
 
-    redirect = RedirectResponse("/solving", status_code=302)
+    redirect = RedirectResponse("disc/list", status_code=302)
 
     # Встановлюємо cookie у відповідь
     redirect.set_cookie(
