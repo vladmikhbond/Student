@@ -1,12 +1,8 @@
-import os
+import os, jwt
 import bcrypt
-
-from fastapi.security import APIKeyCookie
 import httpx
-import jwt
-
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends, HTTPException, Request, Form, Response, Security
+from fastapi.security import APIKeyCookie
+from fastapi import APIRouter, Depends, HTTPException, Request, Form, Security
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
