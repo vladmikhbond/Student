@@ -8,7 +8,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter()
 
-# ----------------------- list of open seances
+# ----------------------- list of open discs
 from pathlib import Path
 
 
