@@ -3,7 +3,7 @@ import bcrypt
 import httpx
 from fastapi.security import APIKeyCookie
 from fastapi import APIRouter, Depends, HTTPException, Request, Form, Security
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app.dal import get_users_db
@@ -70,8 +70,8 @@ async def login(
 # ----------------------------------- logout
 
 @router.get("/login/logout")
-async def logout(request: Request):
-    resp = templates.TemplateResponse("login/login.html", {"request": request})
+async def logout():
+    resp = RedirectResponse("/", status_code=302)
     resp.delete_cookie("access_token", path="/")
     return resp
 
@@ -116,7 +116,10 @@ async def post_pass (
     except:
         error = "Не вдалося змінити пароль"
         return templates.TemplateResponse("login/pass.html", {"request": request, "error": error}) 
-     
-    return templates.TemplateResponse("login/login.html", {"request": request})
+
+    html = f'Пароль змінено на "{password}". Для продовження роботи <a href="/">увійдіть з новим паролем</a>.'
+    return HTMLResponse(content=html, status_code=200)
+
+
 
 
