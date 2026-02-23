@@ -15,9 +15,9 @@ ALGORITHM = os.getenv("ALGORITHM")
 TOKEN_LIFETIME = int(os.getenv("TOKEN_LIFETIME"))
 TOKEN_URL = os.getenv("TOKEN_URL")
 
-JUDGE = {"cs": "http://judge_cs_cont:7010/verify",
-         "py": "http://judge_py_cont:7011/verify",
-         "js": "http://judge_js_cont:7012/verify"}
+# JUDGE = {"cs": "http://judge_cs_cont:7010/verify",
+#          "py": "http://judge_py_cont:7011/verify",
+#          "js": "http://judge_js_cont:7012/verify"}
 
 # шаблони Jinja2
 templates = Jinja2Templates(directory="app/templates")

@@ -25,14 +25,14 @@ def get_users_db():
 ATTEND_DB = "sqlite:////data/Attend.db"
 
 # Створюємо engine 
-engine = create_engine(
+engine_attend = create_engine(
     ATTEND_DB,
     echo=True,
     connect_args={"check_same_thread": False}  # потрібно для SQLite + багатопоточного доступу
 )
 
 # Створюємо фабрику сесій
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_attend)
 
 # Dependency для роутерів
 def get_attend_db():

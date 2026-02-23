@@ -42,7 +42,7 @@ async def post_disc_log (
     body = await request.body()
     log = Log(username=user.username,
               when=dt.datetime.now(),
-              body=body)
+              body=body.decode('utf-8'))
     db.add(log)
     db.commit()
 
