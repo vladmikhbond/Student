@@ -28,7 +28,7 @@ router = APIRouter()
 
 @router.get("/")
 async def get_login(request: Request):
-    return templates.TemplateResponse("login/login.html", {"request": request})
+    return templates.TemplateResponse(request, "login/login.html")
 
 
 @router.post("/")
@@ -49,8 +49,7 @@ async def login(
     if client_response.is_success:
         token = client_response.json()
     else: 
-        return templates.TemplateResponse("login/login.html", {
-            "request": request, 
+        return templates.TemplateResponse(request, "login/login.html", {
             "error": f"Invalid credentials. Response status_code: {client_response.status_code}"
         })
 
@@ -98,7 +97,7 @@ async def get_pass(
     request: Request, 
     user: User = Depends(get_current_user) 
 ):
-    return templates.TemplateResponse("login/pass.html", {"request": request})
+    return templates.TemplateResponse(request, "login/pass.html")
 
 @router.post("/pass")
 async def post_pass (
@@ -115,7 +114,7 @@ async def post_pass (
         db.commit()
     except:
         error = "Не вдалося змінити пароль"
-        return templates.TemplateResponse("login/pass.html", {"request": request, "error": error}) 
+        return templates.TemplateResponse(request, "login/pass.html", {"error": error}) 
 
     html = f'Пароль змінено на "{password}". Для продовження роботи <a href="/">увійдіть з новим паролем</a>.'
     return HTMLResponse(content=html, status_code=200)

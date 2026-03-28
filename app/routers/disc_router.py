@@ -28,7 +28,7 @@ async def get_disc_list(
     """
     path = "/data/public"
     dirs = [dir.name for dir in Path(path).iterdir() if dir.is_dir()]
-    return templates.TemplateResponse("disc/list.html", {"request": request, "dirs": dirs})
+    return templates.TemplateResponse(request, "disc/list.html", {"dirs": dirs})
 
 
 # ------------------- Лог перегляду лекцій (JSON)

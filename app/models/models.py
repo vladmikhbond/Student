@@ -6,6 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 class Base(DeclarativeBase):
     pass
 
+# --------------------- лог відвіування лекцій ---------------
+
 class Log(Base):
     __tablename__ = "logs"
 
