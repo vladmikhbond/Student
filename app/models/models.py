@@ -12,7 +12,7 @@ class Log(Base):
     __tablename__ = "logs"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    username: Mapped[str] = mapped_column(String)
+    username: Mapped[str] = mapped_column(String(50))
     when: Mapped[dt.datetime] = mapped_column(DateTime)
     body: Mapped[str] = mapped_column(Text)
    

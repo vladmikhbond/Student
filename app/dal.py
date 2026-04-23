@@ -11,14 +11,18 @@ engine_users = create_engine(
     connect_args={"check_same_thread": False}  # потрібно для SQLite + багатопоточного доступу
 )
 
-SessionLocalUsers = sessionmaker(autocommit=False, autoflush=False, bind=engine_users)
+SessionLocalUsers = sessionmaker(
+    bind=engine_users,
+    class_=Session,
+    expire_on_commit=False
+)
 
 def get_users_db():
-    db: Session = SessionLocalUsers()
-    try:
-        yield db
-    finally:
-        db.close()
+    with SessionLocalUsers() as session:
+        try:
+            yield session
+        finally:
+            session.close()
 
 # --------------------------- Attend.db ------------------------
 
@@ -32,15 +36,19 @@ engine_attend = create_engine(
 )
 
 # Створюємо фабрику сесій
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_attend)
+SessionLocal = sessionmaker(
+    bind=engine_attend,
+    class_=Session,
+    expire_on_commit=False
+)
 
 # Dependency для роутерів
 def get_attend_db():
-    db: Session = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with SessionLocal() as session:
+        try:
+            yield session
+        finally:
+            session.close()
 
 
 # ================================================================
